@@ -2,6 +2,7 @@
 #define SUDOKU_H_INCLUDED
 
 #include "application.h"
+#include "gameMaster.h"
 #include <vector>
 
 class sudoku : public application
@@ -25,7 +26,10 @@ protected:
 
 
 public:
-	 ///---- Widgetek ----
+    /// ---- Játékszabályok ----
+    gameMaster GM;
+
+    /// ---- Widgetek ----
 	frame * frameHeader;
 	button * buttonNewGame;
 	button * buttonSolve;

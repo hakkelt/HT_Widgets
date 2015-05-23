@@ -40,6 +40,9 @@ void sudoku::field_KeyPress (int keyCode, widget* me)
         ((label*)me)->setText(convertS((char)keyCode));
     else if ( keyCode == genv::key_backspace || keyCode == genv::key_delete )
         ((label*)me)->setText("");
+    else return;
+    ((label*)me)->bold = false;
+    GM.check(fields);
 }
 
 /// ------------------------------------------------------------------------------------------------------------
@@ -109,9 +112,10 @@ void sudoku::init()
             add( temp = new label(85 + j*31 + floor(j/3)*3, 85 + i*31 + floor(i/3)*3, 30, 30) );
             temp->backgroundColor = White;
             temp->background = true;
-            temp->setText("1");
+            temp->setText(convertS((i*3 + j + (int)floor(i/3)) % 9 + 1));
             temp->style = flat;
             temp->tabStop = true;
+            temp->bold = true;
             temp->eventKeyPress = [=] (int keyCode, widget* me)
                         { this->field_KeyPress(keyCode, temp); };
             *groupFields << temp;

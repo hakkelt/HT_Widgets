@@ -20,6 +20,7 @@ void label::labelInit()
     tabStop = false;
     display = trimBegin;
     style = noBorder;
+    bold = false;
 
     VScrollBar = new scrollBar(x + width, y + 1, height - 2, vertical, 0, 0);
     VScrollBar->x -= VScrollBar->width; // csak a konstruktora lefutása után tudom megmondani a scrollBar szélességét
@@ -244,14 +245,29 @@ void label::labelDraw() const
     }
 
     colorize(fontColor);
+    int _x, _y;
     if ( display == wordWrap )
-        gout << move_to(x + marginSide, y + marginTop + gout.cascent());
+    {
+        _x = x + marginSide;
+        _y = y + marginTop + gout.cascent();
+    }
     else if ( align == align_right )
-        gout << move_to(x + width - gout.twidth(dispText)  - marginSide, y + marginTop + gout.cascent());
+    {
+        _x = x + width - gout.twidth(dispText)  - marginSide;
+        _y = y + marginTop + gout.cascent();
+    }
     else if ( align == align_center )
-        gout << move_to(x + (width - gout.twidth(dispText))/2, y + marginTop + gout.cascent());
+    {
+        _x = x + (width - gout.twidth(dispText))/2;
+        _y = y + marginTop + gout.cascent();
+    }
     else
-        gout << move_to(x + marginSide, y + marginTop + gout.cascent());
+    {
+        _x = x + marginSide;
+        _y = y + marginTop + gout.cascent();
+    }
+
+    gout << move_to(_x, _y);
 
     if ( VScrollBar->visible )
     {
@@ -268,9 +284,22 @@ void label::labelDraw() const
             textToDraw += rows[i];
 
         gout << text(textToDraw);
+        if ( bold )
+        {
+            gout << move_to(_x + 1, _y);
+            gout << text(textToDraw);
+        }
     }
     else
+    {
         gout << text(dispText);
+        if ( bold )
+        {
+            gout << move_to(_x + 1, _y);
+            gout << text(dispText);
+        }
+    }
+
 
     switch ( style )
     {

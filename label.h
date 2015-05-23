@@ -36,6 +36,7 @@ public:
     textAlign align; // szöveg igazítása
     textDisplay display; // Túl hosszú szöveg kezelése
     borderStyle style;
+    bool bold;
 
     std::function<void(std::string, widget*)> eventChanged;
 
