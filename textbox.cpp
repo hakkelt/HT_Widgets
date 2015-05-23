@@ -16,7 +16,8 @@ void textBox::textInit()
     pressedTime = 0;
     cursorOn = true;
     display = trimEnd;
-    allowedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|€[]$<>#&@{}\,.-?:_;*§\"'+!%=/()~ˇ^˘°˛`˙´ ";
+    style = deep;
+    allowedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|€[]$<>#&@{}\ ,.-?:_;*§\"'+!%=/()~ˇ^˘°˛`˙´";
 }
 
 textBox::textBox(int x0, int y0, unsigned int width0, unsigned int height0) : label(x0, y0, width0, height0)
@@ -105,8 +106,6 @@ void textBox::draw() const
     }
 
     labelDraw();
-
-    rectange(x, y, width, height);
 
     if ( focus && cursorOn && (!VScrollBar->visible || VScrollBar->getValue() == VScrollBar->getMaxValue() - VScrollBar->getValueWidth()) )
     {

@@ -56,7 +56,6 @@ void application::initApp(int X0, int Y0, bool fullScreen)
     eventMouseUp = [] (int x, int y, char button) {};
     eventMouseMove = [] (int x, int y, char button) {};
     eventHotKeys = [] (char keyCode, bool Control, bool Alt) { return false; };
-    //init();
 }
 
 application::application(int X0, int Y0, bool fullScreen)
@@ -73,7 +72,12 @@ application::application(int X0, int Y0, std::function<bool(int, bool, bool)>f0,
 application::~application()
 {
     for( unsigned int i = 0; i < widgets.size(); i++ )
+    {
+        cout << i << " ";
         delete widgets[i];
+    }
+
+    cout << "\nSuccessful termination!\n";
 }
 /// ----------------------------------------------------------------------------------------------------------------
 

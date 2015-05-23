@@ -51,4 +51,6 @@ public:
     bool onMe(int x0, int y0);
 };
 
+enum borderStyle { noBorder, flat, deep, high };
+
 #endif // WIDGET_H_INCLUDED

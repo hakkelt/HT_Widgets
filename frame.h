@@ -3,7 +3,7 @@
 
 #include "widget.h"
 
-enum frameStyle { flat, deep, high };
+// enum borderStyle { flat, deep, high };
 
 class frame : public widget
 {
@@ -12,7 +12,7 @@ public:
     bool filled;
     Color backgroundColor;
     Color borderColor;
-    frameStyle style;
+    borderStyle style;
 
     /// ---- Konstruktor, destruktor ----
     frame(int x0, int y0, int width0, int height0);

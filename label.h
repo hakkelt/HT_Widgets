@@ -9,6 +9,7 @@
 
 enum textAlign { align_left = 1, align_right = 2, align_center = 3 };
 enum textDisplay { autoSize, trimBegin, trimEnd, wordWrap };
+// enum borderStyle { flat, deep, high };
 
 class label : public widget
 {
@@ -34,6 +35,7 @@ public:
     bool background; // van-e háttér
     textAlign align; // szöveg igazítása
     textDisplay display; // Túl hosszú szöveg kezelése
+    borderStyle style;
 
     std::function<void(std::string, widget*)> eventChanged;
 

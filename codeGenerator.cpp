@@ -39,12 +39,12 @@ enum widget_types { Wbutton = 0, WcheckBox, Wframe, Wlabel, WlistBox, WradioButt
 
 const vector<string> checkBoxProperties = { "checked", "Text" };
 const vector<string> frameProperties = { "filled", "backgroundColor", "borderColor", "style" };
-const vector<string> labelProperties = { "fontColor", "backgroundColor", "marginSide", "marginTop", "background", "align", "display" };
+const vector<string> labelProperties = { "fontColor", "backgroundColor", "marginSide", "marginTop", "background", "align", "display", "Text", "style" };
 const vector<string> buttonProperties = labelProperties;
 const vector<string> listBoxProperties = { "items" };
 const vector<string> radioButtonProperties = { "Text" };
 const vector<string> scrollBarProperties = { "Range", "ValueWidth" };
-const vector<string> textBoxProperties = { "fontColor", "backgroundColor", "marginSide", "marginTop", "background", "align", "display", "allowedChar" };
+const vector<string> textBoxProperties = { "fontColor", "backgroundColor", "marginSide", "marginTop", "background", "align", "display", "Text", "style", "allowedChar" };
 
 int prev_x, prev_y;
 bool notToMoveFlag;
@@ -143,7 +143,7 @@ void codeGenerator::windowArea_Click(int _x, int _y, char Button, widget* me)
         case Wbutton :
             temp = new button(_x, _y, 100, 30, "Button" );
             tempControl->propertyNames = buttonProperties;
-            tempControl->properties = { "", "", "", "", "", "", "" };
+            tempControl->properties = { "", "", "", "", "", "", "", "", "" };
             tempControl->type = "button";
             break;
         case WcheckBox :
@@ -161,7 +161,7 @@ void codeGenerator::windowArea_Click(int _x, int _y, char Button, widget* me)
         case Wlabel :
             temp = new label(_x, _y, 100, 30, "label" );
             tempControl->propertyNames = labelProperties;
-            tempControl->properties = { "", "", "", "", "", "", "" };
+            tempControl->properties = { "", "", "", "", "", "", "", "", "" };
             tempControl->type = "label";
             break;
         case WlistBox:
@@ -191,7 +191,7 @@ void codeGenerator::windowArea_Click(int _x, int _y, char Button, widget* me)
         case WtextBox:
             temp = new textBox(_x, _y, 100, 30, "textBox" );
             tempControl->propertyNames = textBoxProperties;
-            tempControl->properties = { "", "", "", "", "", "", "", "" };
+            tempControl->properties = { "", "", "", "", "", "", "", "", "", "" };
             tempControl->type = "textBox";
             break;
         }
@@ -286,7 +286,7 @@ void codeGenerator::saveXML()
     f << "\"" << groupList->getItem(groupList->getCount() - 1) << "\"</nodes>\n";
 
     f << "\t<widgets>\n";
-    for ( unsigned int i = 16; i < widgets.size(); i++ )
+    for ( unsigned int i = 17; i < widgets.size(); i++ )
     {
         f << "\t\t<" << ((property*)widgets[i]->data)->type << ">\n";
         f << "\t\t\t<name>" << ((property*)widgets[i]->data)->name << "</name>\n";
@@ -337,7 +337,7 @@ void codeGenerator::saveH()
         f << "\tvoid " << groupList->getItem(i) << "_groupChanged (widget* me);\n";
     f << endl;
 
-    for ( unsigned int i = 16; i < widgets.size(); i++ )
+    for ( unsigned int i = 17; i < widgets.size(); i++ )
     {
         property temp = *((property*)widgets[i]->data);
         f << "\t// -- " << temp.name << " --\n";
@@ -359,7 +359,7 @@ void codeGenerator::saveH()
     f << "\npublic:\n";
 
     f << "\t ///---- Widgetek ----\n";
-    for ( unsigned int i = 16; i < widgets.size(); i++ )
+    for ( unsigned int i = 17; i < widgets.size(); i++ )
     {
         string type = ((property*)widgets[i]->data)->type;
         if ( type == "scrollBar_h" )
@@ -398,7 +398,7 @@ void codeGenerator::saveCPP()
     for ( int i = 0; i < groupList->getCount(); i++ )
         f << "void " << projName << "::" << groupList->getItem(i) << "_groupChanged (widget* me) {}\n";
 
-    for ( unsigned int i = 16; i < widgets.size(); i++ )
+    for ( unsigned int i = 17; i < widgets.size(); i++ )
     {
         property temp = *((property*)widgets[i]->data);
         f << "// -- " << temp.name << " --\n";
@@ -434,7 +434,7 @@ void codeGenerator::saveCPP()
         f << "\t" << groupList->getItem(i) << " = newGroup();\n";
 
     f << "\n\t ///---- Widgetek ----\n";
-    for ( unsigned int i = 16; i < widgets.size(); i++ )
+    for ( unsigned int i = 17; i < widgets.size(); i++ )
     {
         property temp = *((property*)widgets[i]->data);
         f << "\t // -- " << temp.name << " --\n";
@@ -462,7 +462,7 @@ void codeGenerator::saveCPP()
         unsigned int j = 0;
         for ( auto propName : temp.propertyNames )
         {
-            if ( temp.properties[j] == "" ) continue;
+            if ( temp.properties[j] == "" ) j++;
             else if ( propName == "Text" || propName == "Range" || propName == "ValueWidth" )
             {
                 f << "\t" << temp.name << "->set" << propName << "(";
@@ -522,20 +522,15 @@ string getBetween(string file, string openTag, string closeTag, int &pos, bool i
 {
     int begining = file.find(openTag, pos) + openTag.length();
     int ending = file.find(closeTag, pos);
-    if ( !ending || ending >= (signed)file.length() ) return "";
+    if ( ending < 1 || ending >= (signed)file.length() ) return "";
     string temp = file.substr(begining, ending - begining);
     if ( inc ) pos = file.find(closeTag, pos) + closeTag.length();
     return temp;
 }
 
-void codeGenerator::loadButton_Click(int _x, int _y, char Button, widget* me)
+void codeGenerator::loadXML(string projName)
 {
-    // Eddig meglévő elemek törlése
-    while ( 16 < widgets.size() ) removeLastWidget();
-
-    windowArea->visible = true;
-
-    ifstream f(projectName->getText() + ".xml");
+    ifstream f(projName + ".xml");
     string file;
     getline(f, file, (char)EOF);
     f.close();
@@ -638,16 +633,39 @@ void codeGenerator::loadButton_Click(int _x, int _y, char Button, widget* me)
             cerr << "Process does not reached the end of the widget's properties or went over it.\n";
     }
 }
+
+void codeGenerator::loadButton_Click(int _x, int _y, char Button, widget* me)
+{
+    // Eddig meglévő elemek törlése
+    while ( 16 < widgets.size() ) removeLastWidget();
+
+    windowArea->visible = true;
+
+    loadXML(projectName->getText());
+}
+
+void codeGenerator::exitButton_Click(int _x, int _y, char Button, widget* me)
+{
+    shutdown();
+}
+
+void codeGenerator::reGenerate(string projName)
+{
+    loadXML(projName);
+    saveH();
+    saveCPP();
+}
 /// -------------------------------------------------------------------------------------------------
 
 
 
 /// --------------------------------- Konstruktor ----------------------------------------------------
-codeGenerator::codeGenerator() : application()
+codeGenerator::codeGenerator(bool show, bool fullScreen) : application()
 {
+    if ( !show ) return;
     int horizontal, vertical;
     GetDesktopResolution(horizontal, vertical);
-    initApp(horizontal, vertical, true);
+    initApp(horizontal, vertical, fullScreen);
     eventHotKeys = [] (char keyCode, bool Control, bool Alt) { return false; };
 }
 
@@ -725,6 +743,10 @@ void codeGenerator::init()
     add ( loadButton = new button(X - 120, 800, 100, 30, "Load",
                                   [=] (int _x, int _y, char Button, widget* me)
                                     { this->loadButton_Click(_x, _y, Button, loadButton); } ) );
+
+    add ( exitButton = new button(X - 230, 840, 210, 30, "Exit",
+                                  [=] (int _x, int _y, char Button, widget* me)
+                                    { this->exitButton_Click(_x, _y, Button, exitButton); } ) );
 
     newGroup();
 

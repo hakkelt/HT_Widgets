@@ -20,6 +20,7 @@ private:
     void saveXML();
     void saveH();
     void saveCPP();
+    void loadXML(std::string projName);
 
 public:
     /// ---- Widgetek ----
@@ -39,6 +40,7 @@ public:
     textBox * newProperty;
     button * saveButton;
     button * loadButton;
+    button * exitButton;
 
     /// ---- Események ----
     void window_Click(int _x, int _y, char button);
@@ -58,10 +60,14 @@ public:
     void newProperty_KeyPress(int keyCode, widget* me);
     void saveButton_Click(int _x, int _y, char Button, widget* me);
     void loadButton_Click(int _x, int _y, char Button, widget* me);
+    void exitButton_Click(int _x, int _y, char Button, widget* me);
 
     /// ---- Konstruktor, destruktor ----
-    codeGenerator();
+    codeGenerator(bool show, bool fullScreen = true);
     virtual ~codeGenerator() {}
+
+    /// Ha csak az xml-t változtattam, és szeretném újragenernálni a forrásfájlokat
+    void reGenerate(std::string projName);
 
     /// ---- Mezõk feltöltése, tulajdonások beállítása ----
     virtual void init();

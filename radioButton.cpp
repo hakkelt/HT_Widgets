@@ -30,6 +30,7 @@ radioButton::radioButton(int x0, int y0, unsigned int width0, unsigned int heigh
     tabStop = true;
     eventChanged = [] (widget* me) {};
     myNode = _node;
+    myNode->add(this);
 }
 radioButton::radioButton(int x0, int y0, unsigned int width0, unsigned int height0, node * _node, std::function<void(widget*)> f0)
                                                                                         : widget(x0, y0, width0, height0)

@@ -19,6 +19,7 @@ void label::labelInit()
     align = align_left;
     tabStop = false;
     display = trimBegin;
+    style = noBorder;
 
     VScrollBar = new scrollBar(x + width, y + 1, height - 2, vertical, 0, 0);
     VScrollBar->x -= VScrollBar->width; // csak a konstruktora lefutása után tudom megmondani a scrollBar szélességét
@@ -237,7 +238,8 @@ void label::labelDraw() const
 
     if ( background )
     {
-        colorize(backgroundColor);
+        if ( focus ) colorize(ActiveColor);
+        else colorize(backgroundColor);
         gout << move_to(x,y) << box(width, height);
     }
 
@@ -269,6 +271,14 @@ void label::labelDraw() const
     }
     else
         gout << text(dispText);
+
+    switch ( style )
+    {
+        case flat: rectange(x, y, width, height); break;
+        case deep: rectange3D(x, y, width, height, true); break;
+        case high: rectange3D(x, y, width, height, false); break;
+        default : break;
+    }
 
     VScrollBar->draw();
 }
