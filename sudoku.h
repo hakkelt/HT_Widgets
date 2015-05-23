@@ -27,7 +27,7 @@ protected:
 
 public:
     /// ---- Játékszabályok ----
-    gameMaster GM;
+    game::gameMaster GM;
 
     /// ---- Widgetek ----
 	frame * frameHeader;

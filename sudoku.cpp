@@ -4,6 +4,7 @@
 #include "graphics.hpp"
 
 using namespace std;
+using namespace game;
 
 /// ---------------------------------------- Események ----------------------------------------------------------
 bool sudoku::handleHotKeys (int keyCode, bool Control, bool Alt)
@@ -28,7 +29,12 @@ bool sudoku::handleHotKeys (int keyCode, bool Control, bool Alt)
 }
 
 // -- buttonNewGame --
-void sudoku::buttonNewGame_Click (int _x, int _y, char button, widget* me) {}
+void sudoku::buttonNewGame_Click (int _x, int _y, char button, widget* me)
+{
+    if ( rbEasy->getValue() ) GM.generateSudoku(fields, easy);
+    else if ( rbMedium->getValue() ) GM.generateSudoku(fields, medium);
+    else GM.generateSudoku(fields, hard);
+}
 
 // -- buttonSolve --
 void sudoku::buttonSolve_Click (int _x, int _y, char button, widget* me) {}
@@ -112,7 +118,6 @@ void sudoku::init()
             add( temp = new label(85 + j*31 + floor(j/3)*3, 85 + i*31 + floor(i/3)*3, 30, 30) );
             temp->backgroundColor = White;
             temp->background = true;
-            temp->setText(convertS((i*3 + j + (int)floor(i/3)) % 9 + 1));
             temp->style = flat;
             temp->tabStop = true;
             temp->bold = true;
@@ -123,7 +128,7 @@ void sudoku::init()
             fields[i].push_back(temp);
         }
     }
-
+    GM.generateSudoku(fields, easy);
 
 }
 /// ------------------------------------------------------------------------------------------------------------
