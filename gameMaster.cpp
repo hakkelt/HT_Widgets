@@ -20,13 +20,28 @@ gameMaster::gameMaster()
     }
 }
 
-bool gameMaster::check(std::vector< std::vector<label*> > &fields)
+bool gameMaster::isFull(vector< vector<label*> > &fields)
 {
-    bool good = true;
+    for ( unsigned int i = 0; i < 9; i++ )
+        for ( unsigned int j = 0; j < 9; j++ )
+            if ( puzzle[i][j] == 0 ) return false;
+
+    for ( unsigned int i = 0; i < 9; i++)
+        for (unsigned int j = 0; j < 9 ; j++)
+            if ( fields[i][j]->bold ) continue;
+            else if ( solution[i][j] == convertI(fields[i][j]->getText()) ) fields[i][j]->fontColor = Green;
+            else fields[i][j]->fontColor = Red;
+
+    return true;
+}
+
+void gameMaster::check(vector< vector<label*> > &fields)
+{
     for ( unsigned int i = 0; i < 9; i++) // Az összes elemet megvizsgálom soronként
     {
         for (unsigned int j = 0; j < 9 ; j++) // Az összes elemet megvizsgálom oszloponként
         {
+            bool good = true;
             int value1 = convertI(fields[i][j]->getText());
 
             for ( unsigned int k = 0; k < 9; k++) // Végigmegyek az elem során
@@ -68,7 +83,6 @@ bool gameMaster::check(std::vector< std::vector<label*> > &fields)
             else if ( good ) fields[i][j]->fontColor = Blue;
         }
     }
-    return good;
 }
 
 void gameMaster::swapRows()
@@ -164,7 +178,7 @@ char gameMaster::good(int i, int j) // megnézi, hogy (i, j) helyre kerülhet-e tö
         for ( int l = floor(i/3)*3; l < floor(i/3)*3 + 3; l++)
         {
             if ( l == i ) continue;
-            exclude.insert(exclude.begin(), puzzle[k][l]);
+            exclude.insert(exclude.begin(), puzzle[l][k]);
         }
     }
 
@@ -177,19 +191,108 @@ char gameMaster::good(int i, int j) // megnézi, hogy (i, j) helyre kerülhet-e tö
 
 void gameMaster::eraseCells(levels level)
 {
-    for ( unsigned int i = 0; i < 9; i++)
-        for ( unsigned int j = 0; j < 9; j++)
-            if ( good(i,j) != 0 )
+    switch ( level )
+    {
+    case easy :
+        {int erased = 0;
+        int limit = 0;
+        while ( erased < 31 || 1000 < limit++ )
+        {
+            int i = rand()%9;
+            int j = rand()%9;
+            if ( puzzle[i][j] && good(i,j) != 0 )
+            {
                 puzzle[i][j] = 0;
+                erased++;
+            }
+        }}
+        break;
+    case medium :
+        {int erased = 0;
+        int limit = 0;
+        while ( erased < 41 || 1000 < limit++ )
+        {
+            int i = rand()%9;
+            for ( unsigned int j = 0; j < 9; j++ )
+            {
+                if ( puzzle[i][j] && good(i,j) != 0 )
+                {
+                    puzzle[i][j] = 0;
+                    erased++;
+                }
+            }
+        }}
+        break;
+    case hard :
+        for ( unsigned int i = 0; i < 9; i++)
+            for ( unsigned int j = 0; j < 9; j++)
+                if ( good(i,j) != 0 )
+                    puzzle[i][j] = 0;
+        break;
+    }
+
 }
 
-void gameMaster::generateSudoku(std::vector< std::vector<label*> > &fields, levels level)
+void gameMaster::countErased()
+{
+    int erased = 0;
+    for ( unsigned int i = 0; i < 9; i++)
+        for ( unsigned int j = 0; j < 9; j++)
+            if ( puzzle[i][j] == 0 ) erased++;
+    cout << "Remainders: " << 81 - erased << endl;
+}
+
+void gameMaster::solve(vector< vector<label*> > &fields)
+{
+    bool change = true;
+    int limit = 0;
+    while ( change && limit++ < 100 )
+    {
+        change = false;
+        for ( unsigned int i = 0; i < 9 ; i ++ )
+            for ( unsigned int j = 0; j < 9 ; j ++ )
+            {
+                if ( puzzle[i][j] != 0 ) continue;
+                char temp = good(i,j);
+                if ( temp != 0 )
+                {
+                    puzzle[i][j] = temp;
+                    change = true;
+                }
+            }
+    }
+
+    for ( unsigned int i = 0; i < 9; i++)
+        for (unsigned int j = 0; j < 9 ; j++)
+            if ( puzzle[i][j] != 0 )
+                fields[i][j]->setText(convertS((int)puzzle[i][j]));
+}
+
+void gameMaster::show(vector< vector<label*> > &fields)
+{
+    for ( unsigned int i = 0; i < 9; i++)
+        for (unsigned int j = 0; j < 9 ; j++)
+            if ( fields[i][j]->bold ) continue;
+            else if ( solution[i][j] == convertI(fields[i][j]->getText()) ) fields[i][j]->fontColor = Green;
+            else fields[i][j]->fontColor = Red;
+
+    if ( isFull(fields) ) return;
+    int i = rand()%9;
+    int j = rand()%9;
+    while ( fields[i][j]->getText() != "" )
+    {
+        i = rand()%9;
+        j = rand()%9;
+    }
+    fields[i][j]->setText(convertS((int)solution[i][j]));
+}
+
+void gameMaster::generateSudoku(vector< vector<label*> > &fields, levels level)
 {
     shuffle();
 
     puzzle = solution;
 
-    eraseCells(level);
     eraseCells(level);
 
     // Generált rejtvény betöltése a mezõkbe

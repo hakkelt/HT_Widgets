@@ -40,8 +40,8 @@ const Color DarkGray = Color(100, 100, 100);
 const Color BackgroundColor = Color(230, 230, 240);
 const Color ActiveColor = Color(200, 215, 200);
 const Color ButtonColor = Color(200, 200, 215);
-const Color Red = Color(255, 0, 0);
-const Color Green = Color(0, 255, 0);
+const Color Red = Color(220, 0, 0);
+const Color Green = Color(0, 220, 0);
 const Color Blue = Color(0, 0, 255);
 
 // Rajzolás színének beállítása

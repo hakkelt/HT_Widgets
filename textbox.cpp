@@ -17,7 +17,7 @@ void textBox::textInit()
     cursorOn = true;
     display = trimEnd;
     style = deep;
-    allowedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|€[]$<>#&@{}\ ,.-?:_;*§\"'+!%=/()~ˇ^˘°˛`˙´";
+    allowedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789|€[]$<>#&@{}\\ ,.-?:_;*§\"'+!%=/()~ˇ^˘°˛`˙´";
 }
 
 textBox::textBox(int x0, int y0, unsigned int width0, unsigned int height0) : label(x0, y0, width0, height0)

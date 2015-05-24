@@ -23,6 +23,9 @@ bool sudoku::handleHotKeys (int keyCode, bool Control, bool Alt)
     case genv::key_down :
         setFocus(((signed)tabIndex + 84) % 81 + 6);
         return true;
+    case genv::key_f1 :
+        GM.solve(fields);
+        return true;
     }
     return false;
 }
@@ -33,10 +36,15 @@ void sudoku::buttonNewGame_Click (int _x, int _y, char button, widget* me)
     if ( rbEasy->getValue() ) GM.generateSudoku(fields, easy);
     else if ( rbMedium->getValue() ) GM.generateSudoku(fields, medium);
     else GM.generateSudoku(fields, hard);
+    labelSuccess->setText("");
+    time = 0;
 }
 
 // -- buttonSolve --
-void sudoku::buttonSolve_Click (int _x, int _y, char button, widget* me) {}
+void sudoku::buttonSolve_Click (int _x, int _y, char button, widget* me)
+{
+    GM.show(fields);
+}
 
 // -- field --
 void sudoku::field_KeyPress (int keyCode, widget* me)
@@ -48,6 +56,19 @@ void sudoku::field_KeyPress (int keyCode, widget* me)
         ((label*)me)->setText("");
     else return;
     GM.check(fields);
+    if ( GM.isFull(fields) ) labelSuccess->setText("Congratulations, you solved this sudoku!");
+}
+
+void sudoku::Tick()
+{
+    static int buffer = 0;
+    if ( 25 < ++buffer )
+    {
+        time++;
+        buffer = 0;
+    }
+    if ( labelSuccess->getText() != "Congratulations, you solved this sudoku!" )
+        labelSuccess->setText(convertS(floor(time/3600)) + ":" + convertS(floor(time/60)) + ":" + convertS(time%60));
 }
 
 /// ------------------------------------------------------------------------------------------------------------
@@ -67,6 +88,9 @@ sudoku::sudoku() : application(450, 440)
 /// ---------------------------- Mezõk feltöltése, tulajdonások beállítása -------------------------------------
 void sudoku::init()
 {
+    timeTick = [=] () { this->Tick(); };
+    time = 0;
+
 	 ///---- Csomópontok ----
 	groupRB = newGroup();
 	groupFields = newGroup();
@@ -86,7 +110,7 @@ void sudoku::init()
 
 	 // -- buttonSolve --
 	add( buttonSolve = new button(115, 5, 100, 30) );
-	buttonSolve->setText("Solve");
+	buttonSolve->setText("Help!");
 	buttonSolve->eventClick = [=] (int _x, int _y, char Button, widget* me)
 				{ this->buttonSolve_Click(_x, _y, Button, buttonSolve); };
     buttonSolve->tabStop = false;
@@ -114,7 +138,7 @@ void sudoku::init()
         for ( unsigned int j = 0; j < 9; j++ )
         {
             label * temp;
-            add( temp = new label(85 + j*31 + floor(j/3)*3, 85 + i*31 + floor(i/3)*3, 30, 30) );
+            add( temp = new label(85 + j*31 + floor(j/3)*3, 90 + i*31 + floor(i/3)*3, 30, 30) );
             temp->backgroundColor = White;
             temp->background = true;
             temp->style = flat;
@@ -128,6 +152,11 @@ void sudoku::init()
         }
     }
     GM.generateSudoku(fields, easy);
+
+    // ---- labelSuccess ----
+    add( labelSuccess = new label(15, 400, 420, 30) );
+    labelSuccess->setText("");
+    labelSuccess->align = align_center;
 
 }
 /// ------------------------------------------------------------------------------------------------------------

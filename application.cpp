@@ -73,11 +73,8 @@ application::~application()
 {
     for( unsigned int i = 0; i < widgets.size(); i++ )
     {
-        cout << i << " ";
         delete widgets[i];
     }
-
-    cout << "\nSuccessful termination!\n";
 }
 /// ----------------------------------------------------------------------------------------------------------------
 
@@ -158,7 +155,7 @@ node* application::newGroup()
         }
         if ( i < 0 && ev.type == ev_mouse && ev.button == 0 ) eventMouseMove(ev.pos_x, ev.pos_y, mouseState);
 
-        timeTick();
+        if ( ev.type == ev_timer ) timeTick();
 
         gout << refresh;
     }

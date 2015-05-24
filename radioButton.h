@@ -4,7 +4,6 @@
 #include "widget.h"
 #include "label.h"
 #include "node.h"
-#include <iostream>
 
 class radioButton : public widget
 {
@@ -25,7 +24,7 @@ public:
     /// ---- Konstruktor, Destruktor ----
     radioButton(int x0, int y0, unsigned int width0, unsigned int height0, node * _node);
     radioButton(int x0, int y0, unsigned int width0, unsigned int height0, node * _node, std::function<void(widget*)> f0);
-    virtual ~radioButton() { std::cout << "radioButton: OK\n"; }
+    virtual ~radioButton() {}
 
     /// ---- Események ----
     virtual void onClick(int posX, int posY, char button);
