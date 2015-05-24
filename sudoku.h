@@ -9,6 +9,7 @@ class sudoku : public application
 {
 protected:
     int time;
+    bool lock;
 	 ///---- Csomópontok ----
 	node * groupRB;
 	node * groupFields;
@@ -25,6 +26,7 @@ protected:
 	// -- field --
 	void field_KeyPress (int keyCode, widget* me);
 
+    // --- időmérő ---
 	void Tick();
 
 
@@ -41,6 +43,7 @@ public:
 	radioButton * rbHard;
 	std::vector< std::vector<label*> > fields;
 	label * labelSuccess;
+	label * labelTime;
 
 	/// ---- Konstruktor, destruktor ----
 	sudoku();

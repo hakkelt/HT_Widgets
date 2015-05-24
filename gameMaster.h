@@ -30,7 +30,7 @@ protected:
 
 public:
     // Ellenõrzi, hogy nincs-e ütkézés az újonnan beírt számnál
-    void check(std::vector< std::vector<label*> > &fields);
+    bool check(std::vector< std::vector<label*> > &fields);
 
     // Új rejtvényt generál,  megjegyzi, és a paraméterként átadott label-mátrixba betölti
     void generateSudoku(std::vector< std::vector<label*> > &fields, levels level);

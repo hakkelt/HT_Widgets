@@ -25,6 +25,7 @@ bool sudoku::handleHotKeys (int keyCode, bool Control, bool Alt)
         return true;
     case genv::key_f1 :
         GM.solve(fields);
+        GM.isFull(fields);
         return true;
     }
     return false;
@@ -38,6 +39,8 @@ void sudoku::buttonNewGame_Click (int _x, int _y, char button, widget* me)
     else GM.generateSudoku(fields, hard);
     labelSuccess->setText("");
     time = 0;
+    lock = false;
+    labelTime->setText("");
 }
 
 // -- buttonSolve --
@@ -49,26 +52,32 @@ void sudoku::buttonSolve_Click (int _x, int _y, char button, widget* me)
 // -- field --
 void sudoku::field_KeyPress (int keyCode, widget* me)
 {
+    if ( lock ) return;
     if ( ((label*)me)->bold ) return;
     if ( 49 <= keyCode && keyCode <= 58 )
         ((label*)me)->setText(convertS((char)keyCode));
     else if ( keyCode == genv::key_backspace || keyCode == genv::key_delete )
         ((label*)me)->setText("");
     else return;
-    GM.check(fields);
-    if ( GM.isFull(fields) ) labelSuccess->setText("Congratulations, you solved this sudoku!");
+
+    if ( GM.check(fields) && GM.isFull(fields) )
+    {
+        labelSuccess->setText("Congratulations, you solved this sudoku!");
+        labelTime->setText("Your time: " + convertS(floor(time/3600)) + ":" + convertS(floor(time/60)) + ":" + convertS(time%60));
+        lock = true;
+    }
 }
 
 void sudoku::Tick()
 {
+    if ( lock ) return;
     static int buffer = 0;
     if ( 25 < ++buffer )
     {
         time++;
         buffer = 0;
     }
-    if ( labelSuccess->getText() != "Congratulations, you solved this sudoku!" )
-        labelSuccess->setText(convertS(floor(time/3600)) + ":" + convertS(floor(time/60)) + ":" + convertS(time%60));
+    labelSuccess->setText(convertS(floor(time/3600)) + ":" + convertS(floor(time/60)) + ":" + convertS(time%60));
 }
 
 /// ------------------------------------------------------------------------------------------------------------
@@ -90,6 +99,7 @@ void sudoku::init()
 {
     timeTick = [=] () { this->Tick(); };
     time = 0;
+    lock = false;
 
 	 ///---- Csomópontok ----
 	groupRB = newGroup();
@@ -154,9 +164,12 @@ void sudoku::init()
     GM.generateSudoku(fields, easy);
 
     // ---- labelSuccess ----
-    add( labelSuccess = new label(15, 400, 420, 30) );
+    add( labelSuccess = new label(15, 390, 420, 30) );
     labelSuccess->setText("");
     labelSuccess->align = align_center;
+    add( labelTime = new label(15, 410, 420, 30) );
+    labelTime->setText("");
+    labelTime->align = align_center;
 
 }
 /// ------------------------------------------------------------------------------------------------------------

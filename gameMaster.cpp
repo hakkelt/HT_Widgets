@@ -24,24 +24,25 @@ bool gameMaster::isFull(vector< vector<label*> > &fields)
 {
     for ( unsigned int i = 0; i < 9; i++ )
         for ( unsigned int j = 0; j < 9; j++ )
-            if ( puzzle[i][j] == 0 ) return false;
+            if ( fields[i][j]->getText() == "" ) return false;
 
     for ( unsigned int i = 0; i < 9; i++)
         for (unsigned int j = 0; j < 9 ; j++)
-            if ( fields[i][j]->bold ) continue;
+            if ( fields[i][j]->bold ) fields[i][j]->fontColor = Black;
             else if ( solution[i][j] == convertI(fields[i][j]->getText()) ) fields[i][j]->fontColor = Green;
             else fields[i][j]->fontColor = Red;
 
     return true;
 }
 
-void gameMaster::check(vector< vector<label*> > &fields)
+bool gameMaster::check(vector< vector<label*> > &fields)
 {
+    bool good = true;
     for ( unsigned int i = 0; i < 9; i++) // Az összes elemet megvizsgálom soronként
     {
         for (unsigned int j = 0; j < 9 ; j++) // Az összes elemet megvizsgálom oszloponként
         {
-            bool good = true;
+            bool cellGood = true;
             int value1 = convertI(fields[i][j]->getText());
 
             for ( unsigned int k = 0; k < 9; k++) // Végigmegyek az elem során
@@ -51,7 +52,7 @@ void gameMaster::check(vector< vector<label*> > &fields)
                 if ( value1 == value2 )
                 {
                     fields[i][j]->fontColor = Red;
-                    good = false;
+                    cellGood = false;
                 }
             }
             for ( unsigned int k = 0; k < 9; k++) // Végigmegyek az elem oszlopán
@@ -61,7 +62,7 @@ void gameMaster::check(vector< vector<label*> > &fields)
                 if ( value1 == value2 )
                 {
                     fields[i][j]->fontColor = Red;
-                    good = false;
+                    cellGood = false;
                 }
             }
             for ( unsigned int k = floor(j/3)*3; k < floor(j/3)*3 + 3; k++) // Végigmegyek az elem celláján
@@ -74,15 +75,18 @@ void gameMaster::check(vector< vector<label*> > &fields)
                     if ( value1 == value2 )
                     {
                         fields[i][j]->fontColor = Red;
-                        good = false;
+                        cellGood = false;
                     }
                 }
             }
 
-            if ( good && fields[i][j]->bold ) fields[i][j]->fontColor = Black;
-            else if ( good ) fields[i][j]->fontColor = Blue;
+            if ( cellGood && fields[i][j]->bold ) fields[i][j]->fontColor = Black;
+            else if ( cellGood ) fields[i][j]->fontColor = Blue;
+            good = cellGood && good;
         }
     }
+
+    return good;
 }
 
 void gameMaster::swapRows()

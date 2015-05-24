@@ -54,7 +54,6 @@
 		<Unit filename="frame.h" />
 		<Unit filename="gameMaster.cpp" />
 		<Unit filename="gameMaster.h" />
-		<Unit filename="group.h" />
 		<Unit filename="label.cpp" />
 		<Unit filename="label.h" />
 		<Unit filename="listBox.cpp" />
