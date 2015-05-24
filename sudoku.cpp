@@ -12,7 +12,6 @@ bool sudoku::handleHotKeys (int keyCode, bool Control, bool Alt)
     switch ( keyCode )
     {
     case genv::key_left :
-        //cout << (signed)tabIndex << " >> " << ((signed)tabIndex - 8) <<  " >> " << ((signed)tabIndex - 8) % 81 <<  " >> " << ((signed)tabIndex - 7) % 81 + 6 << endl;
         setFocus(((signed)tabIndex + 74) % 81 + 6);
         return true;
     case genv::key_right :
@@ -42,12 +41,12 @@ void sudoku::buttonSolve_Click (int _x, int _y, char button, widget* me) {}
 // -- field --
 void sudoku::field_KeyPress (int keyCode, widget* me)
 {
+    if ( ((label*)me)->bold ) return;
     if ( 49 <= keyCode && keyCode <= 58 )
         ((label*)me)->setText(convertS((char)keyCode));
     else if ( keyCode == genv::key_backspace || keyCode == genv::key_delete )
         ((label*)me)->setText("");
     else return;
-    ((label*)me)->bold = false;
     GM.check(fields);
 }
 

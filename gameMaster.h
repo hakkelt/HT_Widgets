@@ -7,13 +7,16 @@
 namespace game
 {
 
-enum levels { easy, medium, hard };
+enum levels { easy = 0, medium, hard };
 
 class gameMaster
 {
 protected:
     const unsigned int N = 20;
     std::vector< std::vector<char> > solution;
+    std::vector< std::vector<char> > puzzle;
+    int erased;
+
     void shuffle(); // Új megoldást állít elő a meglévő keverésével
     void swapRows();
     void swapColumns();
@@ -21,6 +24,9 @@ protected:
     void swapBlockColumns();
     void transposeMain();
     void transposeAnti();
+
+    void eraseCells(levels level);
+    char good(int i, int j);
 
 public:
     // Ellenõrzi, hogy nincs-e ütkézés az újonnan beírt számnál

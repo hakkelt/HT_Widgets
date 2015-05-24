@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include <set>
 
 using namespace std;
 using namespace game;
@@ -21,11 +22,11 @@ gameMaster::gameMaster()
 
 bool gameMaster::check(std::vector< std::vector<label*> > &fields)
 {
+    bool good = true;
     for ( unsigned int i = 0; i < 9; i++) // Az összes elemet megvizsgálom soronként
     {
         for (unsigned int j = 0; j < 9 ; j++) // Az összes elemet megvizsgálom oszloponként
         {
-            bool good = true;
             int value1 = convertI(fields[i][j]->getText());
 
             for ( unsigned int k = 0; k < 9; k++) // Végigmegyek az elem során
@@ -67,6 +68,7 @@ bool gameMaster::check(std::vector< std::vector<label*> > &fields)
             else if ( good ) fields[i][j]->fontColor = Blue;
         }
     }
+    return good;
 }
 
 void gameMaster::swapRows()
@@ -142,14 +144,69 @@ void gameMaster::shuffle()
     }
 }
 
+char gameMaster::good(int i, int j) // megnézi, hogy (i, j) helyre kerülhet-e több szám
+{
+    set<char> exclude; // Ebbe gyûjtöm azokat a számokat, amik nem kerülhetnek az (i, j) helyre
+
+    for ( int k = 0; k < 9; k++ ) // Végigmegyünk az oszlopon
+    {
+        if ( k == i ) continue;
+        exclude.insert(exclude.begin(), puzzle[k][j]);
+    }
+    for ( int k = 0; k < 9; k++ ) // Végigmegyünk a sorokon
+    {
+        if ( k == j ) continue;
+        exclude.insert(exclude.begin(), puzzle[i][k]);
+    }
+    for ( int k = floor(j/3)*3; k < floor(j/3)*3 + 3; k++) // Végigmegyek az elem celláján
+    {
+        if ( k == j ) continue;
+        for ( int l = floor(i/3)*3; l < floor(i/3)*3 + 3; l++)
+        {
+            if ( l == i ) continue;
+            exclude.insert(exclude.begin(), puzzle[k][l]);
+        }
+    }
+
+    if ( exclude.size() - exclude.count(0) == 8 )
+        for ( unsigned char k = 1; k <= 9; k++ )
+            if ( !exclude.count(k) ) return k;
+
+    return 0;
+}
+
+void gameMaster::eraseCells(levels level)
+{
+    for ( unsigned int i = 0; i < 9; i++)
+        for ( unsigned int j = 0; j < 9; j++)
+            if ( good(i,j) != 0 )
+                puzzle[i][j] = 0;
+}
+
 void gameMaster::generateSudoku(std::vector< std::vector<label*> > &fields, levels level)
 {
     shuffle();
 
+    puzzle = solution;
+
+    eraseCells(level);
+    eraseCells(level);
+
     // Generált rejtvény betöltése a mezõkbe
     for ( unsigned int i = 0; i < 9; i++)
         for (unsigned int j = 0; j < 9 ; j++)
-            fields[i][j]->setText(convertS((int)solution[i][j]));
+        {
+            if ( puzzle[i][j] == 0 )
+            {
+                fields[i][j]->setText("");
+                fields[i][j]->bold = false;
+            }
+            else
+            {
+                fields[i][j]->setText(convertS((int)puzzle[i][j]));
+                fields[i][j]->bold = true;
+            }
+        }
 
     check(fields);
 }
